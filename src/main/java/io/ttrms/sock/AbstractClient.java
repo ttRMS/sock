@@ -34,12 +34,9 @@ public abstract class AbstractClient implements IClient {
 
     @Override
     public void makeRequest(Request request, Consumer<Response> onComplete) throws IOException {
-        var prefix = "";
-        if (!request.getRoute().startsWith("/"))
-            prefix = "/".concat(request.getRoute());
-
+        var prefix = (!request.getRoute().startsWith("/")) ? "/" : "";
         this.pendingRequests.put(prefix.concat(request.getRoute()), onComplete);
-        this.out.writeObject(String.format("%s %s", request.getRoute(), request.getRoute()));
+        this.out.writeObject(String.format("%s %s", request.getRoute(), String.join(" ", request.getArgs())));
     }
 
     @Override
