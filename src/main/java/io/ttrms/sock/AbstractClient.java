@@ -39,7 +39,7 @@ public abstract class AbstractClient implements IClient {
             prefix = "/".concat(request.getRoute());
 
         this.pendingRequests.put(prefix.concat(request.getRoute()), onComplete);
-        this.out.writeObject(request);
+        this.out.writeObject(String.format("%s %s", request.getRoute(), request.getRoute()));
     }
 
     @Override
