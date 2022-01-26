@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'io.freefair.lombok' version '6.3.0'
+}
+
+group 'io.ttrms'
+version '0.1.0-SNAPSHOT'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+// Adds a task to IntelliJ that updates Gradle to the specified version
+task updateGradle(type: Wrapper) {
+    gradleVersion = '7.3.3'
+}
