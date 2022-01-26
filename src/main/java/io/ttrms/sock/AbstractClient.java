@@ -3,6 +3,7 @@ package io.ttrms.sock;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractClient implements IClient {
+    @Setter private String prefix = "/";
     protected final Socket socket;
     protected final ObjectOutputStream out;
     protected final ObjectInputStream in;
@@ -34,8 +36,8 @@ public abstract class AbstractClient implements IClient {
 
     @Override
     public void makeRequest(Request request, Consumer<Response> onComplete) throws IOException {
-        var prefix = (!request.getRoute().startsWith("/")) ? "/" : "";
-        this.pendingRequests.put(prefix.concat(request.getRoute()), onComplete);
+        var prefixed = ((!request.getRoute().startsWith(prefix)) ? prefix : "").concat(request.getRoute());
+        this.pendingRequests.put(prefixed, onComplete);
         this.out.writeObject(String.format("%s %s", request.getRoute(), String.join(" ", request.getArgs())));
     }
 
