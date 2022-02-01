@@ -14,8 +14,7 @@ public class Request {
      * The first argument is the request route, the rest are the request arguments.
      */
     public Request(String... args) {
-        this.route = args[0];
-        this.args = args.length > 1 ? List.of(args).subList(1, args.length).toArray(new String[0]) : new String[0];
+        this(List.of(args));
     }
 
     /**
