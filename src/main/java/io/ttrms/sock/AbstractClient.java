@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractClient implements IClient {
     @Setter private String prefix = "/";
+    @Setter private String separator = " ";
     protected final Socket socket;
     protected final ObjectOutputStream out;
     protected final ObjectInputStream in;
@@ -37,8 +38,8 @@ public abstract class AbstractClient implements IClient {
     @Override
     public void makeRequest(Request request, Consumer<Response> onComplete) throws IOException {
         var prefixed = ((!request.getRoute().startsWith(prefix)) ? prefix : "").concat(request.getRoute());
-        this.pendingRequests.put(prefixed, onComplete);
-        this.out.writeObject(String.format("%s %s", request.getRoute(), String.join(" ", request.getArgs())));
+        pendingRequests.put(prefixed, onComplete);
+        out.writeObject(String.format("%s%s%s", prefixed, separator, String.join(separator, request.getArgs())));
     }
 
     @Override
