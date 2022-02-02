@@ -1,9 +1,6 @@
 package io.ttrms.sock;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,12 +17,12 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractClient implements IClient {
     protected final List<Consumer<Request>> listeners = new ArrayList<>();
-    private final ConcurrentHashMap<String, Consumer<Response>> pendingRequests = new ConcurrentHashMap<>();
-    protected Socket socket;
-    protected ObjectOutputStream out;
-    protected ObjectInputStream in;
-    private String prefix = "/";
-    private String separator = " ";
+    protected final ConcurrentHashMap<String, Consumer<Response>> pendingRequests = new ConcurrentHashMap<>();
+    protected String prefix = "/";
+    protected String separator = " ";
+    @NonNull protected Socket socket;
+    @NonNull protected ObjectOutputStream out;
+    @NonNull protected ObjectInputStream in;
 
     protected abstract void beforeStart();
 
