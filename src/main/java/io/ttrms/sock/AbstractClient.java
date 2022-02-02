@@ -14,15 +14,16 @@ import java.util.regex.Pattern;
 
 @Getter
 @Setter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractClient implements IClient {
     protected final List<Consumer<Request>> listeners = new ArrayList<>();
     protected final ConcurrentHashMap<String, Consumer<Response>> pendingRequests = new ConcurrentHashMap<>();
     protected String prefix = "/";
     protected String separator = " ";
-    @NonNull protected Socket socket;
-    @NonNull protected ObjectOutputStream out;
-    @NonNull protected ObjectInputStream in;
+    protected SocketWrap socket;
+
+    protected AbstractClient(Socket socket) throws IOException {
+        setSocket(new SocketWrap(socket, new ObjectOutputStream(socket.getOutputStream()), new ObjectInputStream(socket.getInputStream())));
+    }
 
     protected abstract void beforeStart();
 
@@ -37,15 +38,15 @@ public abstract class AbstractClient implements IClient {
     public void makeRequest(Request request, Consumer<Response> onComplete) throws IOException {
         var prefixed = ((!request.getRoute().startsWith(prefix)) ? prefix : "").concat(request.getRoute());
         pendingRequests.put(prefixed, onComplete);
-        out.writeObject(String.format("%s%s%s", prefixed, separator, String.join(separator, request.getArgs())));
+        getSocket().getOut().writeObject(String.format("%s%s%s", prefixed, separator, String.join(separator, request.getArgs())));
     }
 
     @Override
     public void run() {
         beforeStart();
-        while (this.socket.isConnected()) {
+        while (getSocket().getSocket().isConnected()) {
             try {
-                var input = (String) this.in.readObject();
+                var input = (String) getSocket().getIn().readObject();
                 var req = new Request(input.split(Pattern.quote(" ")));
                 this.listeners.forEach(listener -> listener.accept(req));
             } catch (IOException | ClassNotFoundException ex) {
