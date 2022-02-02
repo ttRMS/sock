@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 @Data
-class SocketWrap {
+public class SocketWrap {
     private final Socket socket;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
