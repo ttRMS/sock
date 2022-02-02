@@ -16,15 +16,16 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @Getter
+@Setter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractClient implements IClient {
-    @Setter private String prefix = "/";
-    @Setter private String separator = " ";
     protected final List<Consumer<Request>> listeners = new ArrayList<>();
     private final ConcurrentHashMap<String, Consumer<Response>> pendingRequests = new ConcurrentHashMap<>();
     protected Socket socket;
     protected ObjectOutputStream out;
     protected ObjectInputStream in;
+    private String prefix = "/";
+    private String separator = " ";
 
     protected abstract void beforeStart();
 
